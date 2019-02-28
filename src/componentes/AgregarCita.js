@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import uuid from 'uuid';
 
 class AgregarCita extends Component {
 
@@ -10,22 +11,52 @@ class AgregarCita extends Component {
     sintomasRef = React.createRef();
 
 
-    state = { }
+    state = { 
+        error: false
+    }
 
     crearNuevaCita = (e) => {
         e.preventDefault();
+        
+        const mascota = this.nombreMascotaRef.current.value,
+            propietario = this.propietarioRef.current.value,
+            fecha = this.fechaRef.current.value,
+            hora = this.horaRef.current.value,
+            sintomas = this.sintomasRef.current.value;
 
-        console.log(this.nombreMascotaRef.current.value);
-        console.log(this.propietarioRef.current.value);
-        console.log(this.fechaRef.current.value);
-        console.log(this.horaRef.current.value);
-        console.log(this.sintomasRef.current.value);
-
-        this.props.crearCita();
+        if(mascota === '' || propietario === '' || fecha === '' || hora === '' || sintomas === '') {
+            console.log('Falta campos por llenar');
+            this.setState({
+                error: true
+            });
+        } else {
+            const nuevaCita = {
+                id: uuid(),
+                mascota, 
+                propietario,
+                fecha,
+                hora,
+                sintomas
+            }
+                    
+            // Se envia el objeto al padre para actualizar el state 
+            this.props.crearCita(nuevaCita);
+    
+            // Reiniciar el formulario
+            e.currentTarget.reset();        
+            
+            // Eliminar error
+            this.setState({
+                error: false
+            });
+        }
     
     }
 
     render(){
+
+        const existeError = this.state.error;
+
         return(
             <div className="card mt-5">
                 <div className="card-body">
@@ -71,7 +102,7 @@ class AgregarCita extends Component {
                             </div>
                         </div>
                     </form>
-
+                     { existeError ? <div className="alert alert-danger text-center">Todos los campos son obligatorios</div> : ''}
 
                 </div>
             </div>
