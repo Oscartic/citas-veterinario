@@ -8,6 +8,22 @@ class App extends Component {
     citas: []
   }
 
+  componentDidMount() {
+    const CitasLS = localStorage.getItem('citas');
+    if(CitasLS) {
+      this.setState({
+        citas: JSON.parse(CitasLS)
+      });
+    }
+  }
+
+  componentDidUpdate() {
+    localStorage.setItem(
+      'citas', 
+      JSON.stringify(this.state.citas)
+    )
+  }
+
   crearCita = (nuevaCita) => {
     // console.log(cita);
     const citas = [...this.state.citas, nuevaCita];
@@ -18,7 +34,20 @@ class App extends Component {
     this.setState({
       citas
     });
-  
+  }
+
+  borrarCita = id => {
+    console.log(id);
+    // obtener estado del state
+    const citasActuales = [...this.state.citas];
+    
+    // borrar el elemento del state 
+    const citas = citasActuales.filter(cita => cita.id !== id);
+
+    // actualizar el state
+    this.setState({
+      citas
+    });
   }
 
   render() {
@@ -37,6 +66,7 @@ class App extends Component {
           <div className="col-md-6">
             <ListaCistas 
               citas={ this.state.citas }
+              borrarCita={this.borrarCita}
             />
           </div>
         </div>     
